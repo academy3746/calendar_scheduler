@@ -88,17 +88,18 @@ class _HomeScreenState extends State<HomeScreen> {
           backgroundColor: Theme.of(context).primaryColor,
           onPressed: () {
             showModalBottomSheet(
-                context: context,
-                builder: (context) {
-                  return GestureDetector(
-                    onTap: () {
-                      FocusScope.of(context).unfocus();
-                    },
-                    child: const ScheduleBottomSheet(),
-                  );
-                },
-                isScrollControlled: true,
-                isDismissible: true);
+              context: context,
+              builder: (context) {
+                return GestureDetector(
+                  onTap: () {
+                    FocusScope.of(context).unfocus();
+                  },
+                  child: const ScheduleBottomSheet(),
+                );
+              },
+              isScrollControlled: true,
+              isDismissible: true,
+            );
           },
           child: const Icon(
             color: Colors.white,
