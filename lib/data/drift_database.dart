@@ -25,7 +25,7 @@ class LocalDataBase extends _$LocalDataBase {
     return into(schedules).insert(data);
   }
 
-  // DELETE
+  /// DELETE
   Future<int> removeSchedule(int id) {
     return (delete(schedules)..where((tbl) => tbl.id.equals(id))).go();
   }
@@ -34,6 +34,7 @@ class LocalDataBase extends _$LocalDataBase {
   int get schemaVersion => 1;
 }
 
+/// Open DB Connection on both AOS & IOS Platform
 LazyDatabase _openConnection() {
   return LazyDatabase(
     () async {
