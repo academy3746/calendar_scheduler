@@ -99,16 +99,23 @@ class _HomeScreenState extends State<HomeScreen> {
                       itemBuilder: (context, index) {
                         final db = snapshot.data![index];
 
-                        return Padding(
-                          padding: const EdgeInsets.only(
-                            bottom: Sizes.size10,
-                            left: Sizes.size8,
-                            right: Sizes.size8,
-                          ),
-                          child: ScheduleCard(
-                            startTime: db.startTime,
-                            endTime: db.endTime,
-                            content: db.content,
+                        return Dismissible(
+                          key: ObjectKey(db.id),
+                          direction: DismissDirection.endToStart,
+                          onDismissed: (direction) {
+                            GetIt.I<LocalDataBase>().removeSchedule(db.id);
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                              bottom: Sizes.size10,
+                              left: Sizes.size8,
+                              right: Sizes.size8,
+                            ),
+                            child: ScheduleCard(
+                              startTime: db.startTime,
+                              endTime: db.endTime,
+                              content: db.content,
+                            ),
                           ),
                         );
                       },
