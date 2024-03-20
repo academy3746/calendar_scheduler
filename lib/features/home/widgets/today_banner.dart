@@ -18,7 +18,6 @@ class TodayBanner extends StatelessWidget {
         TextStyle(color: Colors.white, fontWeight: FontWeight.w600);
 
     return Container(
-      margin: const EdgeInsets.only(top: Sizes.size16),
       color: Theme.of(context).primaryColor,
       child: Padding(
         padding: const EdgeInsets.symmetric(

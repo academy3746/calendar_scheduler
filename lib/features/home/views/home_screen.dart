@@ -1,12 +1,15 @@
 // ignore_for_file: deprecated_member_use
 
+import 'package:calendar_scheduler/common/constants/gaps.dart';
 import 'package:calendar_scheduler/common/constants/sizes.dart';
 import 'package:calendar_scheduler/common/utils/back_handler_button.dart';
+import 'package:calendar_scheduler/data/drift_database.dart';
 import 'package:calendar_scheduler/features/home/widgets/main_calendar.dart';
 import 'package:calendar_scheduler/features/home/widgets/schedule_bottom_sheet.dart';
 import 'package:calendar_scheduler/features/home/widgets/schedule_card.dart';
 import 'package:calendar_scheduler/features/home/widgets/today_banner.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -55,32 +58,64 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Scaffold(
         body: Container(
           margin: const EdgeInsets.all(Sizes.size20),
-          child: SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-            scrollDirection: Axis.vertical,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                /// 달력
-                MainCalendar(
-                  onDaySelected: _onDaySelected,
-                  selectedDate: thisSelectedDate,
-                ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              /// 달력
+              MainCalendar(
+                onDaySelected: _onDaySelected,
+                selectedDate: thisSelectedDate,
+              ),
+              Gaps.v10,
 
-                /// 오늘 일자
-                TodayBanner(
-                  selectedDate: thisSelectedDate,
-                  count: 0,
-                ),
+              /// 오늘 일자
+              TodayBanner(
+                selectedDate: thisSelectedDate,
+                count: 0,
+              ),
 
-                /// 오늘 일정
-                const ScheduleCard(
-                  startTime: 13,
-                  endTime: 15,
-                  content: 'Flutter 공부!',
+              /// 오늘 일정
+              Expanded(
+                child: StreamBuilder<List<Schedule>>(
+                  stream:
+                      GetIt.I<LocalDataBase>().watchSchedules(thisSelectedDate),
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) {
+                      return Center(
+                        child: Text(
+                          '등록된 일정이 없습니다.',
+                          style: TextStyle(
+                            color: Theme.of(context).primaryColor,
+                            fontSize: Sizes.size14,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      );
+                    }
+
+                    return ListView.builder(
+                      itemCount: snapshot.data!.length,
+                      itemBuilder: (context, index) {
+                        final db = snapshot.data![index];
+
+                        return Padding(
+                          padding: const EdgeInsets.only(
+                            bottom: Sizes.size8,
+                            left: Sizes.size8,
+                            right: Sizes.size8,
+                          ),
+                          child: ScheduleCard(
+                            startTime: db.startTime,
+                            endTime: db.endTime,
+                            content: db.content,
+                          ),
+                        );
+                      },
+                    );
+                  },
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
         floatingActionButton: FloatingActionButton(

@@ -78,10 +78,6 @@ class ScheduleCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(
-        top: Sizes.size16,
-        bottom: Sizes.size16,
-      ),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(Sizes.size8),
         border: Border.all(
@@ -104,7 +100,6 @@ class ScheduleCard extends StatelessWidget {
 
               /// 일정 내용 위젯
               CardContent(content: content),
-              Gaps.h16,
             ],
           ),
         ),
