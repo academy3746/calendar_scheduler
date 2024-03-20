@@ -94,7 +94,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   onTap: () {
                     FocusScope.of(context).unfocus();
                   },
-                  child: const ScheduleBottomSheet(),
+                  child: ScheduleBottomSheet(
+                    selectedTime: thisSelectedDate,
+                  ),
                 );
               },
               isScrollControlled: true,

@@ -7,11 +7,17 @@ class CommonTextField extends StatelessWidget {
     super.key,
     required this.label,
     required this.timeSelected,
+    this.onSaved,
+    this.validator,
   });
 
   final String label;
 
   final bool timeSelected;
+
+  final FormFieldSetter<String>? onSaved;
+
+  final FormFieldValidator<String>? validator;
 
   @override
   Widget build(BuildContext context) {
@@ -53,6 +59,8 @@ class CommonTextField extends StatelessWidget {
                 fillColor: Colors.grey.shade300,
                 suffixText: timeSelected ? '시' : null,
               ),
+              onSaved: onSaved,
+              validator: validator,
             ),
           ),
         ],
