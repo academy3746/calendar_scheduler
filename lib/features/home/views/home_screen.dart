@@ -69,10 +69,16 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               Gaps.v10,
 
-              /// 오늘 일자
-              TodayBanner(
-                selectedDate: thisSelectedDate,
-                count: 0,
+              /// 오늘 일정 개수
+              StreamBuilder<List<Schedule>>(
+                stream:
+                    GetIt.I<LocalDataBase>().watchSchedules(thisSelectedDate),
+                builder: (context, snapshot) {
+                  return TodayBanner(
+                    selectedDate: thisSelectedDate,
+                    count: snapshot.data?.length ?? 0,
+                  );
+                },
               ),
 
               /// 오늘 일정
