@@ -1,8 +1,10 @@
+import 'package:calendar_scheduler/data/drift_database.dart';
 import 'package:calendar_scheduler/features/home/views/home_screen.dart';
 import 'package:calendar_scheduler/features/splash/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:get_it/get_it.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -10,6 +12,10 @@ void main() async {
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
 
   await initializeDateFormatting();
+
+  final db = LocalDataBase();
+
+  GetIt.I.registerSingleton<LocalDataBase>(db);
 
   runApp(const CalendarApp());
 }
