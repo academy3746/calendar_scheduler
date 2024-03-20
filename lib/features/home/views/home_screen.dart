@@ -56,6 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
         return Future.value(false);
       },
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         body: Container(
           margin: const EdgeInsets.all(Sizes.size20),
           child: Column(
@@ -100,7 +101,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                         return Padding(
                           padding: const EdgeInsets.only(
-                            bottom: Sizes.size8,
+                            bottom: Sizes.size10,
                             left: Sizes.size8,
                             right: Sizes.size8,
                           ),
