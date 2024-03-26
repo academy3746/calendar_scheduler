@@ -21,7 +21,8 @@ class ScheduleModel {
     return {
       'id': id,
       'content': content,
-      'date': '${date.year}${date.month.toString().padLeft(2, '0')}${date.day.toString().padLeft(2, '0')}',
+      'date':
+          '${date.year}${date.month.toString().padLeft(2, '0')}${date.day.toString().padLeft(2, '0')}',
       'startTime': startTime,
       'endTime': endTime
     };
@@ -34,6 +35,22 @@ class ScheduleModel {
       date: DateTime.parse(data['date']),
       startTime: data['startTime'],
       endTime: data['endTime'],
+    );
+  }
+
+  ScheduleModel copyWith({
+    String? id,
+    String? content,
+    DateTime? date,
+    int? startTime,
+    int? endTime,
+  }) {
+    return ScheduleModel(
+      id: id ?? this.id,
+      content: content ?? this.content,
+      date: date ?? this.date,
+      startTime: startTime ?? this.startTime,
+      endTime: endTime ?? this.endTime,
     );
   }
 }
