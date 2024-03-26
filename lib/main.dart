@@ -9,13 +9,21 @@ import 'package:get_it/get_it.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
-
   await initializeDateFormatting();
 
   final db = LocalDataBase();
 
   GetIt.I.registerSingleton<LocalDataBase>(db);
+
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarBrightness: Brightness.light,
+        statusBarIconBrightness: Brightness.dark,
+        systemNavigationBarColor: Colors.transparent,
+        systemNavigationBarIconBrightness: Brightness.dark
+    ),
+  );
 
   runApp(const CalendarApp());
 }
