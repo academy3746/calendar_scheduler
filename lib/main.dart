@@ -2,6 +2,8 @@ import 'package:calendar_scheduler/features/home/repositories/schedule_repo.dart
 import 'package:calendar_scheduler/features/home/view_models/schedule_provider.dart';
 import 'package:calendar_scheduler/features/home/views/home_screen.dart';
 import 'package:calendar_scheduler/features/splash/splash_screen.dart';
+import 'package:calendar_scheduler/firebase_options.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -11,6 +13,10 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await initializeDateFormatting();
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(

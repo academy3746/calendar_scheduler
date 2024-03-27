@@ -5,9 +5,9 @@ import 'package:calendar_scheduler/common/constants/sizes.dart';
 import 'package:calendar_scheduler/common/utils/app_snackbar.dart';
 import 'package:calendar_scheduler/common/utils/common_text_field.dart';
 import 'package:calendar_scheduler/features/home/models/schedule_model.dart';
-import 'package:calendar_scheduler/features/home/view_models/schedule_provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:uuid/uuid.dart';
 
 class ScheduleBottomSheet extends StatefulWidget {
   const ScheduleBottomSheet({
@@ -33,34 +33,6 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
 
   /// 내용
   String? content;
-
-  /// 작성 내용 저장
-  Future<void> _onSavePressed(BuildContext context) async {
-    var snackbar = AppSnackbar(
-      context: context,
-      msg: '작성 내용이 저장 되었습니다!',
-    );
-
-    if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
-
-      context.read<ScheduleProvider>().createSchedule(
-            model: ScheduleModel(
-              id: 'temp_model',
-              content: content!,
-              date: widget.selectedTime,
-              startTime: startTime!,
-              endTime: endTime!,
-            ),
-          );
-
-      if (!context.mounted) return;
-
-      snackbar.showSnackbar(context);
-
-      Navigator.of(context).pop();
-    }
-  }
 
   /// 시간 값 검증
   String? _timeValidator(String? value) {
@@ -90,6 +62,43 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
     }
 
     return null;
+  }
+
+  /// 작성 내용 저장
+  Future<void> _onSavePressed(BuildContext context) async {
+    var snackbar = AppSnackbar(
+      context: context,
+      msg: '작성 내용이 저장 되었습니다!',
+    );
+
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+
+      final model = ScheduleModel(
+        id: const Uuid().v4(),
+        content: content!,
+        date: widget.selectedTime,
+        startTime: startTime!,
+        endTime: endTime!,
+      );
+
+      await FirebaseFirestore.instance
+          .collection(
+            'schedule',
+          )
+          .doc(
+            model.id,
+          )
+          .set(
+            model.toMap(),
+          );
+
+      if (!context.mounted) return;
+
+      snackbar.showSnackbar(context);
+
+      Navigator.of(context).pop();
+    }
   }
 
   @override
