@@ -4,10 +4,10 @@ import 'package:calendar_scheduler/common/constants/gaps.dart';
 import 'package:calendar_scheduler/common/constants/sizes.dart';
 import 'package:calendar_scheduler/common/utils/app_snackbar.dart';
 import 'package:calendar_scheduler/common/utils/common_text_field.dart';
-import 'package:calendar_scheduler/data/drift_database.dart';
-import 'package:drift/drift.dart' hide Column;
+import 'package:calendar_scheduler/features/home/models/schedule_model.dart';
+import 'package:calendar_scheduler/features/home/view_models/schedule_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
+import 'package:provider/provider.dart';
 
 class ScheduleBottomSheet extends StatefulWidget {
   const ScheduleBottomSheet({
@@ -35,7 +35,7 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
   String? content;
 
   /// 작성 내용 저장
-  Future<void> _onSavePressed() async {
+  Future<void> _onSavePressed(BuildContext context) async {
     var snackbar = AppSnackbar(
       context: context,
       msg: '작성 내용이 저장 되었습니다!',
@@ -44,16 +44,17 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
-      await GetIt.I<LocalDataBase>().createSchedule(
-        SchedulesCompanion(
-          startTime: Value(startTime!),
-          endTime: Value(endTime!),
-          content: Value(content!),
-          date: Value(widget.selectedTime),
-        ),
-      );
+      context.read<ScheduleProvider>().createSchedule(
+            model: ScheduleModel(
+              id: 'temp_model',
+              content: content!,
+              date: widget.selectedTime,
+              startTime: startTime!,
+              endTime: endTime!,
+            ),
+          );
 
-      if (!mounted) return;
+      if (!context.mounted) return;
 
       snackbar.showSnackbar(context);
 
@@ -156,7 +157,7 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: _onSavePressed,
+                    onPressed: () => _onSavePressed(context),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Theme.of(context).primaryColor,
                     ),
