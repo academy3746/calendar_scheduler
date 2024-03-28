@@ -1,3 +1,5 @@
+import 'package:calendar_scheduler/common/constants/date.dart';
+
 class ScheduleModel {
   final String id;
 
@@ -21,8 +23,7 @@ class ScheduleModel {
     return {
       'id': id,
       'content': content,
-      'date':
-          '${date.year}${date.month.toString().padLeft(2, '0')}${date.day.toString().padLeft(2, '0')}',
+      'date': dateFormat.format(date),
       'startTime': startTime,
       'endTime': endTime
     };

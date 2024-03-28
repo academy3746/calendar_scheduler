@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:calendar_scheduler/common/constants/date.dart';
 import 'package:calendar_scheduler/features/home/models/schedule_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
@@ -16,17 +17,21 @@ class ScheduleRepository {
   Future<List<ScheduleModel>> getSchedules({required DateTime date}) async {
     List<ScheduleModel> scheduleList = [];
 
-    final res = await _dio.get(
-      _targetUrl,
-      queryParameters: {
-        'date':
-            '${date.year}${date.month.toString().padLeft(2, '0')}${date.day.toString().padLeft(2, '0')}',
-      },
-    );
+    final serverTime = dateFormat.format(date);
 
-    scheduleList = res.data
-        .map<ScheduleModel>(
-          (e) => ScheduleModel.fromJson(e),
+    final snapshot = await _database
+        .collection('schedule')
+        .where(
+          'date',
+          isEqualTo: serverTime,
+        )
+        .get();
+
+    scheduleList = snapshot.docs
+        .map(
+          (doc) => ScheduleModel.fromJson(
+            doc.data(),
+          ),
         )
         .toList();
 
