@@ -1,12 +1,12 @@
-// ignore_for_file: avoid_print
-
 import 'package:calendar_scheduler/common/constants/gaps.dart';
 import 'package:calendar_scheduler/common/constants/sizes.dart';
 import 'package:calendar_scheduler/common/utils/app_snackbar.dart';
 import 'package:calendar_scheduler/common/utils/common_text_field.dart';
+import 'package:calendar_scheduler/common/utils/validator.dart';
 import 'package:calendar_scheduler/features/home/models/schedule_model.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:calendar_scheduler/features/home/view_models/schedule_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
 class ScheduleBottomSheet extends StatefulWidget {
@@ -34,38 +34,19 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
   /// 내용
   String? content;
 
-  /// 시간 값 검증
-  String? _timeValidator(String? value) {
-    if (value == null) {
-      return '값을 입력해 주세요!';
-    }
+  FormValidator? validate;
 
-    int? number;
+  @override
+  void initState() {
+    super.initState();
 
-    try {
-      number = int.parse(value);
-    } catch (error) {
-      return '숫자를 입력해 주세요!';
-    }
-
-    if (number < 0 || number > 24) {
-      return '0과 24 사이의 숫자를 입력해 주세요!';
-    }
-
-    return null;
-  }
-
-  /// 내용 값 검증
-  String? _contentValidator(String? value) {
-    if (value == null || value.isEmpty) {
-      return '내용을 입력해 주세요!';
-    }
-
-    return null;
+    validate = FormValidator(context: context);
   }
 
   /// 작성 내용 저장
   Future<void> _onSavePressed(BuildContext context) async {
+    final provider = context.read<ScheduleProvider>();
+
     var snackbar = AppSnackbar(
       context: context,
       msg: '작성 내용이 저장 되었습니다!',
@@ -74,7 +55,7 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
-      final model = ScheduleModel(
+      final data = ScheduleModel(
         id: const Uuid().v4(),
         content: content!,
         date: widget.selectedTime,
@@ -82,16 +63,7 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
         endTime: endTime!,
       );
 
-      await FirebaseFirestore.instance
-          .collection(
-            'schedule',
-          )
-          .doc(
-            model.id,
-          )
-          .set(
-            model.toMap(),
-          );
+      provider.createSchedule(model: data);
 
       if (!context.mounted) return;
 
@@ -130,7 +102,7 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
                         onSaved: (String? value) {
                           startTime = int.parse(value!);
                         },
-                        validator: _timeValidator,
+                        validator: (value) => validate!.timeValidator(value),
                       ),
                     ),
                     Gaps.h16,
@@ -143,7 +115,7 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
                         onSaved: (String? value) {
                           endTime = int.parse(value!);
                         },
-                        validator: _timeValidator,
+                        validator: (value) => validate!.timeValidator(value),
                       ),
                     ),
                   ],
@@ -158,7 +130,7 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
                     onSaved: (String? value) {
                       content = value;
                     },
-                    validator: _contentValidator,
+                    validator: (value) => validate!.contentValidator(value),
                   ),
                 ),
 

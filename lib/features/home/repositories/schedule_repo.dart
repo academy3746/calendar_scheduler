@@ -1,8 +1,12 @@
 import 'dart:io';
 import 'package:calendar_scheduler/features/home/models/schedule_model.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
 
 class ScheduleRepository {
+  /// Open Database
+  final FirebaseFirestore _database = FirebaseFirestore.instance;
+
   final _dio = Dio();
 
   final _targetUrl =
@@ -30,19 +34,8 @@ class ScheduleRepository {
   }
 
   /// 일정 생성
-  Future<String> createSchedule({required ScheduleModel model}) async {
-    var schedule = '';
-
-    final value = model.toMap();
-
-    final res = await _dio.post(
-      _targetUrl,
-      data: value,
-    );
-
-    schedule = res.data?['id'];
-
-    return schedule;
+  Future<void> createSchedule({required ScheduleModel model}) async {
+    await _database.collection('schedule').doc(model.id).set(model.toMap());
   }
 
   /// 일정 삭제

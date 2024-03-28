@@ -1,7 +1,6 @@
 import 'package:calendar_scheduler/features/home/models/schedule_model.dart';
 import 'package:calendar_scheduler/features/home/repositories/schedule_repo.dart';
 import 'package:flutter/material.dart';
-import 'package:uuid/uuid.dart';
 
 class ScheduleProvider extends ChangeNotifier {
   final ScheduleRepository repo;
@@ -33,56 +32,7 @@ class ScheduleProvider extends ChangeNotifier {
 
   /// 일정 생성 (UI State)
   Future<void> createSchedule({required ScheduleModel model}) async {
-    final date = model.date;
-
-    const uuid = Uuid();
-
-    final tempId = uuid.v4();
-
-    final newModel = model.copyWith(
-      id: tempId,
-    );
-
-    cache.update(
-      date,
-      (value) => [
-        ...value,
-        newModel,
-      ]..sort(
-          (a, b) => a.startTime.compareTo(
-            b.startTime,
-          ),
-        ),
-      ifAbsent: () => [newModel],
-    );
-
-    notifyListeners();
-
-    try {
-      final savedData = await repo.createSchedule(model: model);
-
-      cache.update(
-        date,
-        (value) => value
-            .map(
-              (element) => element.id == tempId
-                  ? element.copyWith(
-                      id: savedData,
-                    )
-                  : element,
-            )
-            .toList(),
-      );
-    } catch (error) {
-      cache.update(
-        date,
-        (value) => value
-            .where(
-              (element) => element.id != tempId,
-            )
-            .toList(),
-      );
-    }
+    await repo.createSchedule(model: model);
 
     notifyListeners();
   }
