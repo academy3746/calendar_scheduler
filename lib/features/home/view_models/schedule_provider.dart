@@ -14,7 +14,7 @@ class ScheduleProvider extends ChangeNotifier {
   Map<DateTime, List<ScheduleModel>> cache = {};
 
   ScheduleProvider({required this.repo}) {
-    repo.getSchedules(date: selectedDate);
+    getSchedules(date: selectedDate);
   }
 
   /// 일정 조회 (UI State)
